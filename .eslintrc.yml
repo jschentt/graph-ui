@@ -1,0 +1,25 @@
+env:
+  browser: true
+  node: true
+  jest: true
+  es6: true
+parser: "babel-eslint"
+parserOptions:
+  sourceType: module # 支持import
+  ecmaFeatures:
+    jsx: true # 支持jsx
+extends:
+  - eslint:recommended
+  - plugin:import/errors # 检查import的路径是否正确
+  - plugin:react/recommended # react
+rules:
+  no-console:
+    - error
+    - { allow: ["error"] }
+  react/display-name: false,
+  react/prop-types: false,
+
+settings:
+  import/resolver:
+    node:
+      paths: src
