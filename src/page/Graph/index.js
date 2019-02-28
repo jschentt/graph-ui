@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Row } from 'antd'
+import { Row, message } from 'antd'
 import { observer, inject } from 'mobx-react'
 import SearchInput from 'component/SearchInput'
 import Graph from 'component/Graph'
@@ -60,7 +60,12 @@ class Home extends Component {
       JSON.parse(sessionStorage.getItem('relData')) || [],
     ]
 
-    const nodeObj = nodes.filter(item => item.name.indexOf(value) != -1)
+    const uniNodes = nodes.filter(item => item.name == value)
+    const nodeObj =
+      uniNodes.length > 0
+        ? uniNodes
+        : nodes.filter(item => item.name.indexOf(value) != -1)
+
     const unique = arr => {
       let unique = {}
       arr.forEach(function(item) {
@@ -72,15 +77,22 @@ class Home extends Component {
       return arr
     }
 
-    const nodeSource = unique(nodeObj)
+    if (nodeObj.length === 0) {
+      message.error('查询失败')
+      return
+    }
+
     let nodeData = []
-    const child = nodeSource.pop()
-    const relObj = rels.filter(item => item.source == child.id)
+    const nodeSource = unique(nodeObj)
+    const relObj = rels.filter(item =>
+      nodeSource.map(item => parseInt(item.id)).includes(item.source),
+    )
     const relData = unique(relObj)
+
     relData.forEach(item => {
       nodeData.push(...unique(nodes.filter(value => value.id == item.target)))
     })
-    nodeData = [].concat(unique(nodeData), [child])
+    nodeData = [].concat(unique(nodeData), nodeSource)
     this.setState({ baseData: [nodeData, relData] })
   }
 

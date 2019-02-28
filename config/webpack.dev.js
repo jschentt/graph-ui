@@ -1,4 +1,3 @@
-// const BASEURL = 'https://test.scanv.com'
 const BASEURL = 'http://localhost:3000'
 console.log('后端地址: %s', process.env.BASEURL || BASEURL)
 
